@@ -1,0 +1,45 @@
+.btn {
+  border-radius: 2px;
+  color: theme('colors.black');
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-primary {
+  color: theme('colors.black');
+  font-weight: bold;
+  margin-right: 10px;
+  border: 2px solid theme('colors.black');
+  cursor: pointer;
+  text-transform: none;
+  height: auto;
+  padding: 10px 20px;
+  min-height: 48px;
+  transition: .3s ease background;
+  &:last-of-type {
+    margin-right: 0;
+  }
+  &:hover {
+    background: darken(#fff, 5%);
+  }
+}
+
+.btn-transparent {
+  @extend .btn-primary;
+  color: transparent;
+  border-color: transparent;
+}
+
+.btn-small {
+  @extend .btn-primary;
+  font-size: 12px;
+  padding: 6px 20px;
+  min-height: 44px;
+}
+
+.btn-close {
+  svg {
+    width: 35px;
+    height: 35px;
+  }
+}

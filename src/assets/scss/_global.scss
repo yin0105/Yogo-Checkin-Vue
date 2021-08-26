@@ -1,0 +1,58 @@
+
+
+body {
+  font-size: 16px;
+}
+
+h1 {
+  @apply text-3xl;
+  font-weight: bold;
+}
+h2 {
+  @apply text-xl;
+  font-weight: bold;
+}
+h3 {
+  @apply text-lg;
+  font-weight: bold;
+}
+a {
+  @apply text-blue-600 underline;
+}
+
+
+button:focus {
+  outline: 0;
+}
+
+.wrapper {
+  padding: 0 20px;
+  margin: 0 auto;
+  @screen lg {
+    width: 1100px;
+    margin: 0 auto;
+
+    &.wrapper-narrow {
+      width: 550px;
+    }
+  }
+}
+
+.center-content {
+  @screen sm {
+    max-width: 480px;
+  }
+  @screen lg {
+    max-width: 550px;
+  }
+}
+
+.fixed-bottom-left {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+}
+
+.select-transparent {
+  -webkit-tap-highlight-color: transparent;
+}

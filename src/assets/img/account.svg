@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="300px" height="300px" viewBox="0 0 300 300" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>account</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="account" fill="#757575" fill-rule="nonzero">
+            <path d="M150,0 C67.2,0 0,67.2 0,150 C0,232.8 67.2,300 150,300 C232.8,300 300,232.8 300,150 C300,67.2 232.8,0 150,0 Z M150,45 C174.9,45 195,65.1 195,90 C195,114.9 174.9,135 150,135 C125.1,135 105,114.9 105,90 C105,65.1 125.1,45 150,45 Z M150,258 C112.5,258 79.35,238.8 60,209.7 C60.45,179.85 120,163.5 150,163.5 C179.85,163.5 239.55,179.85 240,209.7 C220.65,238.8 187.5,258 150,258 Z" id="Shape"></path>
+        </g>
+    </g>
+</svg>

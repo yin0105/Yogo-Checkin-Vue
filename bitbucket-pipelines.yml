@@ -1,0 +1,130 @@
+image: node:12
+
+pipelines:
+  default:
+    - step:
+        caches:
+          - node
+        script:
+          - echo Ok
+        #- npm install
+        #- npm test # No tests so far. Leaving this and hope to make them some day.
+  branches:
+    staging:
+      - step:
+          caches:
+            - node
+          name: Build
+          script:
+            - yarn
+            - touch .env
+            - echo "VUE_APP_API_ROOT=https://api-staging.yogo.dk"  >> .env
+            - echo "VUE_APP_IMAGE_SERVER_IMGIX=yogo-staging.imgix.net" >> .env
+            - cat .env
+            - yarn run build
+            - echo ${BITBUCKET_COMMIT} > dist/commit-hash.txt
+          artifacts:
+            - dist/**
+      - step:
+          name: Deploy
+          deployment: staging
+          script:
+            - pipe: atlassian/aws-s3-deploy:0.4.3
+              variables:
+                AWS_ACCESS_KEY_ID: $S3_ACCESS_KEY_ID_STAGING
+                AWS_SECRET_ACCESS_KEY: $S3_ACCESS_KEY_SECRET_STAGING
+                AWS_DEFAULT_REGION: 'eu-central-1'
+                S3_BUCKET: 'app-staging.yogo.dk/checkin'
+                LOCAL_PATH: 'dist'
+                ACL: 'public-read'
+            - pipe: atlassian/aws-cloudfront-invalidate:0.3.2
+              variables:
+                AWS_ACCESS_KEY_ID: $S3_ACCESS_KEY_ID_STAGING
+                AWS_SECRET_ACCESS_KEY: $S3_ACCESS_KEY_SECRET_STAGING
+                AWS_DEFAULT_REGION: 'eu-central-1'
+                DISTRIBUTION_ID: $CLOUDFRONT_DISTRIBUTION_ID_STAGING
+#      - step:
+#          caches:
+#            - node
+#          script:
+#            - apt-get update
+#            - apt-get install -y ruby-full
+#            - apt-get install -y default-jre
+#            - gem install s3_website
+#            - yarn
+#            - rm -f env_config.js
+#            - "echo export default { > ./env_config.js"
+#            - "echo apiRoot: '\"https://api-staging.yogo.dk\"',  >> ./env_config.js"
+#            - "echo imageServerImgix: '\"yogo-staging.imgix.net\"', >> ./env_config.js"
+#            - "echo } >> ./env_config.js"
+#            - cat env_config.js
+#            - yarn run build
+#            # Write current commit hash. We use it to update the web app on changes, especially if it has been bookmarked and is not updated automatically.
+#            - "echo ${BITBUCKET_COMMIT} > dist/commit-hash.txt"
+#            - "echo s3_id: ${S3_ACCESS_KEY_ID_STAGING} > ./s3_website.yml"
+#            - "echo s3_secret: ${S3_ACCESS_KEY_SECRET_STAGING} >> ./s3_website.yml"
+#            - "echo s3_bucket: app-staging.yogo.dk >> ./s3_website.yml"
+#            - "echo s3_key_prefix: checkin >> ./s3_website.yml"
+#            - "echo site: dist/ >> ./s3_website.yml"
+#            - "echo cloudfront_distribution_id: $CLOUDFRONT_DISTRIBUTION_ID_STAGING >> ./s3_website.yml"
+#            - "echo cloudfront_wildcard_invalidation: true >> ./s3_website.yml"
+#            - s3_website push
+    production:
+      - step:
+          caches:
+            - node
+          name: Build
+          script:
+            - yarn
+            - touch .env
+            - echo "VUE_APP_API_ROOT=https://api.yogo.dk"  >> .env
+            - echo "VUE_APP_IMAGE_SERVER_IMGIX=yogo.imgix.net" >> .env
+            - cat .env
+            - yarn run build
+            - echo ${BITBUCKET_COMMIT} > dist/commit-hash.txt
+          artifacts:
+            - dist/**
+      - step:
+          name: Deploy
+          deployment: production
+          script:
+            - pipe: atlassian/aws-s3-deploy:0.4.3
+              variables:
+                AWS_ACCESS_KEY_ID: $S3_ACCESS_KEY_ID_PRODUCTION
+                AWS_SECRET_ACCESS_KEY: $S3_ACCESS_KEY_SECRET_PRODUCTION
+                AWS_DEFAULT_REGION: 'eu-central-1'
+                S3_BUCKET: 'app.yogo.dk/checkin'
+                LOCAL_PATH: 'dist'
+                ACL: 'public-read'
+            - pipe: atlassian/aws-cloudfront-invalidate:0.3.2
+              variables:
+                AWS_ACCESS_KEY_ID: $S3_ACCESS_KEY_ID_PRODUCTION
+                AWS_SECRET_ACCESS_KEY: $S3_ACCESS_KEY_SECRET_PRODUCTION
+                AWS_DEFAULT_REGION: 'eu-central-1'
+                DISTRIBUTION_ID: $CLOUDFRONT_DISTRIBUTION_ID_PRODUCTION
+#      - step:
+#          caches:
+#            - node
+#          script:
+#            - apt-get update
+#            - apt-get install -y ruby-full
+#            - apt-get install -y default-jre
+#            - gem install s3_website
+#            - yarn
+#            - rm -f env_config.js
+#            - "echo export default { > ./env_config.js"
+#            - "echo apiRoot: '\"https://api.yogo.dk\"',  >> ./env_config.js"
+#            - "echo imageServerImgix: '\"yogo.imgix.net\"', >> ./env_config.js"
+#            - "echo } >> ./env_config.js"
+#            - cat env_config.js
+#            - yarn run build
+#            # Write current commit hash. We use it to update the web app on changes, especially if it has been bookmarked and is not updated automatically.
+#            - "echo ${BITBUCKET_COMMIT} > dist/commit-hash.txt"
+#            - "echo s3_id: ${S3_ACCESS_KEY_ID_PRODUCTION} > ./s3_website.yml"
+#            - "echo s3_secret: ${S3_ACCESS_KEY_SECRET_PRODUCTION} >> ./s3_website.yml"
+#            - "echo s3_bucket: app.yogo.dk >> ./s3_website.yml"
+#            - "echo s3_key_prefix: checkin >> ./s3_website.yml"
+#            - "echo site: dist/ >> ./s3_website.yml"
+#            - "echo cloudfront_distribution_id: $CLOUDFRONT_DISTRIBUTION_ID_PRODUCTION >> ./s3_website.yml"
+#            - "echo cloudfront_wildcard_invalidation: true >> ./s3_website.yml"
+#            - s3_website push
